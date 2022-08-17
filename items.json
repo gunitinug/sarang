@@ -1,0 +1,36 @@
+{
+	"title": "sarang's lawn exercise progress scoring sheet",
+	"version": "0.1",
+	"activity_types":
+			[
+				{ "id": 0, "desc": "walk_clock-wise" },
+			        { "id": 1, "desc": "walk_counter-clock-wise" },
+			        { "id": 2, "desc": "walk"}
+			],
+	"score_items":
+			[
+				{ "id": -1, "desc": "dummy", "allowed": ["test"] },
+				{ "id": 0, "desc": "abnormal_posture", "allowed": ["-"] },
+				{ "id": 1, "desc": "falls", "allowed": ["-"] },
+				{ "id": 2, "desc": "pain/discomfort", "allowed": ["-"] },
+				{ "id": 3, "desc": "fatigue", "allowed": ["-"] },
+				{ "id": 4, "desc": "natural_movement", "allowed": ["+"] },
+				{ "id": 5, "desc": "ease_of_movement", "allowed": ["+"] },
+				{ "id": 6, "desc": "injury", "allowed": ["F","P"] },
+				{ "id": 7, "desc": "unsteady_walking_in_a_straight_line", "allowed": ["-"] },
+				{ "id": 8, "desc": "able_to_walk_in_a_straight_line", "allowed": ["+"] },
+				{ "id": 9, "desc": "steady_when_standing_still", "allowed": ["+"] },
+				{ "id": 10, "desc": "unsteady_when_standing_still", "allowed": ["-"] },
+				{ "id": 11, "desc": "reflex_to_avoid_falling", "allowed": ["+"] },
+				{ "id": 12, "desc": "imperfect_reflex_to_avoid_falling", "allowed": ["-"] },
+				{ "id": 13, "desc": "loss_of_energy", "allowed": ["-"] },
+				{ "id": 14, "desc": "loss_of_appetite", "allowed": ["-"] },
+				{ "id": 15, "desc": "normal_energy_levels/appetite", "allowed": ["+"] },
+				{ "id": 16, "desc": "finish_with_20_mins_sub_bathing", "allowed": ["+"] },
+				{ "id": 17, "desc": "session_totalling_1_hr", "allowed": ["+"] },
+				{ "id": 18, "desc": "a_sub-session_every_five_to_eight_mins", "allowed": ["+"] },
+				{ "id": 19, "desc": "try_to_give_water", "allowed": ["+"] },
+				{ "id": 20, "desc": "try_to_give_food", "allowed": ["+"] },
+				{ "id": 21, "desc": "check_pee/poo", "allowed": ["+"] }
+			]
+}
