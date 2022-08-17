@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 VER="0.1"
 
 # menu(main menu)
@@ -108,7 +109,7 @@ done_add_entry () {
     DATA=$(echo "$DATA" | sed 's/:$//')
     
     local err=$(./write.sh "$DATE" "$DATA" 3>&1 1>&2 2>&3)
-    [[ -n "$err" ]] && whiptail --msgbox "$err" 20 78 --title "Error" && return 1
+    [[ -n "$err" ]] && whiptail --msgbox "$err" 20 78 --title "Error" && DATA="" && DATE="" && to_process_l="$(jq -r '.score_items[]|select(.id!=-1)|(.id|tostring)+":"+.allowed[]+" "+.desc' items.json | sed -E 's/$/ OFF/')" && spool_l="" && return 1   # clean up when there is write error.
 
     local report=$(./report.sh "$DATE")
     whiptail --msgbox "$report" 16 200 --title "Report" --scrolltext     
@@ -176,10 +177,10 @@ add_entry () {
 #add_entry
 
 # test: DATE
-echo date: "$DATE"
+#echo date: "$DATE"
 
 # test: DATA
-echo data: "$DATA"
+#echo data: "$DATA"
 
 #
 # show report: whiptail textbox to show output from report.sh
@@ -233,13 +234,13 @@ show_report () {
     local secs2=$(date -d "$date2" +%s)
     
     # test: date1,date2
-    echo date1: "$date1"
-    echo date2: "$date2"
+    #echo date1: "$date1"
+    #echo date2: "$date2"
     
     # ask report.sh to generate report and display in msgbox.
     if [[ $secs2 -ge $secs1 ]]; then
 	# test: secs2>=secs1
-	echo "yes, valid range"   # PASS!
+	#echo "yes, valid range"   # PASS!
 
 	# generate report here
 	local report=""
