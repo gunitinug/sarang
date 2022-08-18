@@ -10,7 +10,7 @@ This bash script is to provide a scoring system for Sarang's morning exercise on
 The UI is whiptail and backend is done by manipulating JSON files using jq.
 
 ## Requirements
-You need `whiptail` and `jq` and of course, run it on bash.
+You need `whiptail` and `jq` and of course, run it on bash on a GNU/Linux system.
 
 ## Running
 Simply execute `run.sh`.
