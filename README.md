@@ -12,5 +12,5 @@ The UI is whiptail and backend is done by manipulating JSON files using jq.
 ## Running
 Simply execute `run.sh`.
 
-# Requirements
+## Requirements
 You need `whiptail` and `jq` and of course, run it on bash.
