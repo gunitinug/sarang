@@ -1,5 +1,24 @@
 #!/bin/bash
 
+# SARANG v0.1
+#
+# A way to measure Sarang's progress.
+#
+# Written by Logan Won-Ki Lee
+# August 2022
+#
+# Sarang's story:
+# Sarang is a 14 year old fox terrier. He is my dog. He injured his neck on
+# an accident and he got paralyzed on all his limbs. Me and my family cared
+# for Sarang for two months; he made a remarkable recovery. Now he is able
+# to stand and walk, albeit wobbly at times.
+#
+# SARANG is a program to measure Sarang's progress when Sarang does his daily
+# morning exercise on our backyward lawn. So I can track his progress (esp.
+# how he walks) and hopefully move him out of the room (he is confined to mum's
+# room except when he is out for his exercise). Fingers crossed.
+#
+
 
 VER="0.1"
 
@@ -244,7 +263,7 @@ show_report () {
 
 	# generate report here
 	local report=""
-	report=$(./report.sh "$date1" "$date2")
+	report=$(./report.sh "$date1" "$date2" 2>/dev/null)
 	whiptail --msgbox "$report" 16 200 --title "Report" --scrolltext
 	# test: report   PASS!
 	#echo "$report"
@@ -267,7 +286,6 @@ show_report () {
 #    - usual loop until valid dates are obtained.
 # - list found entries for deletion
 # - yesno box to confirm
-# - error msgbox if failed -> main menu. OK msgbox if success -> main menu.
 delete_entry () {
     # get date1
     while :; do
@@ -295,14 +313,14 @@ delete_entry () {
     if [[ $secs2 -ge $secs1 ]]; then
 	# matched entries' report
 	local report=""
-	report=$(./report.sh "$date1" "$date2")
+	report=$(./report.sh "$date1" "$date2" 2>/dev/null)
 	[[ -z "$report" ]] && return 1
 	
 	whiptail --yesno "$report" 16 200 --title "Confirm matched entries to delete" --scrolltext
 	local sel=$?
 	
 	# test: sel
-	echo yesno sel: $sel
+	# echo yesno sel: $sel   PASS!
 	
 	# if yes, delete entries: between secs1 and secs2.
 	[[ $sel -eq 0 ]] && jq --argjson s1 $secs1 --argjson s2 $secs2 'del(.data[]|select(.since_epoch>=$s1 and .since_epoch<=$s2))' data.json > /tmp/sarang-del-tmp.json
