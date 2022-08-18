@@ -264,10 +264,56 @@ show_report () {
 #
 # delete entry:
 # - two inputboxes for date range
-#    - error msgbox if fail -> main menu.
-# - textbox to list found entries for deletion
+#    - usual loop until valid dates are obtained.
+# - list found entries for deletion
 # - yesno box to confirm
 # - error msgbox if failed -> main menu. OK msgbox if success -> main menu.
+delete_entry () {
+    # get date1
+    while :; do
+	local chk1=1
+	local date1=$(whiptail --inputbox "Provide start date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+
+	local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
+	[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern ]] && chk1=0
+	[[ "$chk1" -eq 0 ]] && break	
+    done
+
+    # get date2
+    while :; do
+	local chk2=1
+	local date2=$(whiptail --inputbox "Provide end date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+
+	local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
+	[[ -n "$date2"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date2") -eq 0 ]] && [[ "$date2" =~ $pattern ]] && chk2=0
+	[[ "$chk2" -eq 0 ]] && break	
+    done
+
+    local secs1=$(date -d "$date1" +%s)
+    local secs2=$(date -d "$date2" +%s)
+
+    if [[ $secs2 -ge $secs1 ]]; then
+	# matched entries' report
+	local report=""
+	report=$(./report.sh "$date1" "$date2")
+	[[ -z "$report" ]] && return 1
+	
+	whiptail --yesno "$report" 16 200 --title "Confirm matched entries to delete" --scrolltext
+	local sel=$?
+	
+	# test: sel
+	echo yesno sel: $sel
+	
+	# if yes, delete entries: between secs1 and secs2.
+	[[ $sel -eq 0 ]] && jq --argjson s1 $secs1 --argjson s2 $secs2 'del(.data[]|select(.since_epoch>=$s1 and .since_epoch<=$s2))' data.json > /tmp/sarang-del-tmp.json
+	[[ $sel -eq 0 ]] && cp /tmp/sarang-del-tmp.json ./data.json
+	[[ $sel -eq 0 ]] && rm /tmp/sarang-del-tmp.json
+    else
+	#date1=""
+	#date2=""
+	return 1
+    fi
+}
 
 
 # main menu
@@ -287,6 +333,7 @@ while :; do
 	    show_report
 	    ;;
 	"DELETE_ENTRY")
+	    delete_entry
 	    ;;
 	"QUIT")
 	    break
