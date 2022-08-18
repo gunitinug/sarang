@@ -40,16 +40,21 @@
 ARG1="$1"   # first date in range
 ARG2="$2"   # second date in range
 
+[[ -z "$ARG1" || -z "$ARG2" ]] && echo "args not provided" >&2 && exit 1
+
 # set up: A_EPOCH_RANGE
 A_EPOCH_RANGE=()
 generate_range_in_epoch () {
-    if [[ -z $2 ]]; then
-	A_EPOCH_RANGE+=($(date -d "$1 00:00:00" +"%s"))
-	A_EPOCH_RANGE+=($(date -d "$1 23:59:59" +"%s"))
-    else
-	A_EPOCH_RANGE+=($(date -d "$1 00:00:00" +"%s"))
-	A_EPOCH_RANGE+=($(date -d "$2 23:59:59" +"%s"))
-    fi
+    #if [[ -z $2 ]]; then
+	#A_EPOCH_RANGE+=($(date -d "$1 00:00:00" +"%s"))
+	#A_EPOCH_RANGE+=($(date -d "$1 23:59:59" +"%s"))
+    #else
+	#A_EPOCH_RANGE+=($(date -d "$1 00:00:00" +"%s"))
+	#A_EPOCH_RANGE+=($(date -d "$2 23:59:59" +"%s"))
+    #fi
+
+    A_EPOCH_RANGE+=($(date -d "$1" +"%s"))
+    A_EPOCH_RANGE+=($(date -d "$2" +"%s"))
 }
 
 # test   PASS!
@@ -154,8 +159,3 @@ generate_range_in_epoch "$ARG1" "$ARG2"
 ref_by_range_in_epoch
 generate_report
 
-##############################################################
-# NOTE: we need separate script to actually generate data.json.
-# this involves parsing string "[ID,TYPE,SCORE:]..."
-# UPDATE: this is implemented in write.sh
-##############################################################

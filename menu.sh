@@ -120,11 +120,11 @@ add_entry () {
     # implement "now" as date.
     while :; do
 	local chk=1
-	local date=$(whiptail --inputbox "Provide date(eg. 20 aug 2023 or 'now')" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+	local date=$(whiptail --inputbox "Provide date(eg. 20 aug 2023 12:00 or 'now')" 8 39 --title "Date" 3>&1 1>&2 2>&3)
 
-	[[ "$date" == "now" ]] && date=$(date +'%e %b %G') && break
+	[[ "$date" == "now" ]] && date=$(date +'%e %b %G %H:%M') && break
 	
-	local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4}$"
+	local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
 	[[ -n "$date"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date") -eq 0 ]] && [[ "$date" =~ $pattern ]] && chk=0
 	[[ "$chk" -eq 0 ]] && break	
     done
@@ -204,13 +204,13 @@ show_report () {
 
     # first, check date1,date2 to match regex ^[0-9]{1,2} [a-zA-Z]{3,9} [0-9]{4}$
     # if fail, keep displaying inputbox until valid value is provided.
-    local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4}$"
+    local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
     while :; do
-	date1=$(whiptail --inputbox "Provide first date from range (can be just 'now')" 8 39 --title "Date range" 3>&1 1>&2 2>&3)
+	date1=$(whiptail --inputbox "Provide first date from range (eg. 20 aug 2023 9:15 or can be just 'now')" 10 39 --title "Date range" 3>&1 1>&2 2>&3)
 	if [[ "$date1" == "now" ]]; then
 	    # get current date string
 	    # assign to date1 and date2
-	    date1=$(date +'%e %b %G')
+	    date1=$(date +'%e %b %G %H:%M')
 	    date2="$date1"
 	    now=0
 	    break
@@ -222,7 +222,7 @@ show_report () {
 
     if [[ "$now" -eq 1 ]]; then
 	while :; do
-	    date2=$(whiptail --inputbox "Provide second date from range" 8 39 --title "Date range" 3>&1 1>&2 2>&3)
+	    date2=$(whiptail --inputbox "Provide second date from range (eg. 20 aug 2023 9:15)" 8 39 --title "Date range" 3>&1 1>&2 2>&3)
 	    [[ -n "$date2"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date2") -eq 0 ]] && [[ "$date2" =~ $pattern  ]] && break
         done
     fi
@@ -244,7 +244,7 @@ show_report () {
 
 	# generate report here
 	local report=""
-	[[ $secs1 -eq $secs2 ]] && report=$(./report.sh "$date1") || report=$(./report.sh "$date1" "$date2")
+	report=$(./report.sh "$date1" "$date2")
 	whiptail --msgbox "$report" 16 200 --title "Report" --scrolltext
 	# test: report   PASS!
 	#echo "$report"
