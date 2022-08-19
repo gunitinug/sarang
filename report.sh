@@ -139,6 +139,11 @@ ref_type_desc_by_id () {
 # for this we need: f's: ref_item_desc_by_id, ref_type_desc_by_id.
 # specifying type is optional.
 generate_report () {
+    # get max/min/average of final scores from S_QUERY
+    local max=$(jq '.final_score' <<< "$S_QUERY" | jq -s 'max')  
+    local min=$(jq '.final_score' <<< "$S_QUERY" | jq -s 'min')
+    local avg=$(jq '.final_score' <<< "$S_QUERY" | jq -s 'add/length')
+    
     local lines="$(jq -r '.since_epoch as $t|.final_score as $f | .scores[]|($t|tostring)+"|"+($f|tostring)+"|"+(.id|tostring)+"|"+(.type|tostring)+"|"+(.score|tostring)' <<< "$S_QUERY")"
     # print inside this loop
     printf "%-30s %-11s %-50s %-50s %-11s\n" "time" "final_score" "score_item" "type" "score"
@@ -170,7 +175,10 @@ generate_report () {
 	printf "%-30s %-11s %-50s %-50s %-11s\n" $time_h $final_score $i_desc $t_desc $score
     done <<< "$lines"
 
-    
+    echo
+    echo "final score stats (from $ARG1 to $ARG2):"
+    printf "%-10s %-10s %-10s\n" "min" "max" "avg"
+    printf "%-10s %-10s %-10s\n" $min $max $avg
 
 }
 
