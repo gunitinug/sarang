@@ -139,29 +139,37 @@ add_entry () {
     # implement "now" as date.
     while :; do
 	local chk=1
-	local date=$(whiptail --inputbox "Provide date(eg. 20 aug 2023 12:00 or 'now')" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+	date_ae=$(whiptail --inputbox "Provide date(eg. 20 aug 2023 12:00 or 'now')" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+	local cancel="$?"
 
-	[[ "$date" == "now" ]] && date=$(date +'%e %b %G %H:%M') && break
+	# if selected 'cancel' then return to main menu.
+	[[ "$cancel" -gt 0 ]] && return 1
+	
+	[[ "$date_ae" == "now" ]] && date_ae=$(date +'%e %b %G %H:%M') && break
 	
 	local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
-	[[ -n "$date"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date") -eq 0 ]] && [[ "$date" =~ $pattern ]] && chk=0
+	[[ -n "$date_ae"  ]] && [[ "$cancel" -eq 0 ]] && [[ $(validate_date "$date_ae") -eq 0 ]] && [[ "$date_ae" =~ $pattern ]] && chk=0
 	[[ "$chk" -eq 0 ]] && break	
     done
 
-    DATE="$date"
+    DATE="$date_ae"
     
     # radiolist loop
     while :; do
 	# display radiolist
-	local sel=$(whiptail --title "Add entry" --radiolist \
-			     "Choose an item to score next.\ndate: $date" 30 78 20 \
+	sel_ae=$(whiptail --title "Add entry" --radiolist \
+			     "Choose an item to score next.\ndate: $DATE" 30 78 20 \
 			     "DONE" "Process your scores" ON \
 			     "ACTIVITY_TYPES" "Show available activity types" OFF \
 			     "PROCESSED_ITEMS" "Show scored items" OFF \
 			     "CANCEL" "Cancel and back to main menu" OFF $to_process_l 3>&1 1>&2 2>&3)
 
+	# if selected 'cancel' then return to main menu.
+	local cancel2="$?"
+	[[ "$cancel2" -gt 0 ]] && return 1
+	
 	# choices
-	case "$sel" in
+	case "$sel_ae" in
 	    "DONE")
 	        # pass DATE and DATA to write.sh (this writes entry to data.json).
 		# trailing : from DATA should be removed beforehand.
@@ -185,7 +193,7 @@ add_entry () {
 		return 1
 		;;
 	    *)
-		select_item $sel 
+		select_item $sel_ae 
 		;;
         esac
 
