@@ -219,11 +219,12 @@ add_entry () {
 # - then display all matched entries in msgbox.
 
 show_report () {
-    # "now" is removed.
+    # "now" is removed. "today" added.
     # if date1==date2 then pass to report.sh just one of them.
     local date1=""
     local date2=""
     #local now=1
+    local today=1
 
     # loop inputboxes until valid date1, date2 is retrieved
     # if "now" is entered then only show one inputbox then date2=$date1.
@@ -233,24 +234,46 @@ show_report () {
     # if fail, keep displaying inputbox until valid value is provided.
     local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}$"
 
-    # get date1
     while :; do
-	local chk1=1
-	date1=$(whiptail --inputbox "Provide start date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
-
-	[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern ]] && chk1=0
-	[[ "$chk1" -eq 0 ]] && break	
+	date1=$(whiptail --inputbox "Provide first date from range (eg. 20 aug 2023 9:15 or just 'today')" 10 39 --title "Date range" 3>&1 1>&2 2>&3)
+	if [[ "$date1" == "today" ]]; then
+		# assign to date1 and date2
+		date1="$(date +'%e %b %G') 0:0" 
+		date2="$(date +'%e %b %G') 23:59"
+		today=0
+		break
+	else
+		[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern  ]] && break
+	fi
     done
+
+
+    if [[ "$today" -eq 1 ]]; then
+	while :; do
+		date2=$(whiptail --inputbox "Provide second date from range (eg. 20 aug 2023 9:15)" 8 39 --title "Date range" 3>&1 1>&2 2>&3)
+		[[ -n "$date2"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date2") -eq 0 ]] && [[ "$date2" =~ $pattern  ]] && break
+	done
+    fi    
+    
+    # get date1
+    #while :; do
+	#local chk1=1
+	#date1=$(whiptail --inputbox "Provide start date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+
+	#[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern ]] && chk1=0
+	#[[ "$chk1" -eq 0 ]] && break	
+    #done
 
     # get date2
-    while :; do
-	local chk2=1
-	date2=$(whiptail --inputbox "Provide end date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
+    #while :; do
+	#local chk2=1
+	#date2=$(whiptail --inputbox "Provide end date(eg. 20 aug 2023 12:00)" 8 39 --title "Date" 3>&1 1>&2 2>&3)
 
-	[[ -n "$date2"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date2") -eq 0 ]] && [[ "$date2" =~ $pattern ]] && chk2=0
-	[[ "$chk2" -eq 0 ]] && break	
-    done
+	#[[ -n "$date2"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date2") -eq 0 ]] && [[ "$date2" =~ $pattern ]] && chk2=0
+	#[[ "$chk2" -eq 0 ]] && break	
+    #done
 
+    #####################
 
     #while :; do
 	#date1=$(whiptail --inputbox "Provide first date from range (eg. 20 aug 2023 9:15)" 10 39 --title "Date range" 3>&1 1>&2 2>&3)
@@ -292,7 +315,7 @@ show_report () {
 	# generate report here
 	local report=""
 	report=$(./report.sh "$date1" "$date2" 2>/dev/null)
-	whiptail --msgbox "$report" 16 200 --title "Report" --scrolltext
+	whiptail --msgbox "$report" 16 200 --title "Report: from $date1 to $date2" --scrolltext
 	# test: report   PASS!
 	#echo "$report"
     else
