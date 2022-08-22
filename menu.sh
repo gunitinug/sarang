@@ -233,15 +233,15 @@ show_report () {
     # first, check date1,date2 to match regex ^[0-9]{1,2} [a-zA-Z]{3,9} [0-9]{4}$
     # if fail, keep displaying inputbox until valid value is provided.
     local pattern="^[0-9]{1,2} [A-Za-z]{3,9} [0-9]{4} [0-9]{1,2}:[0-9]{1,2}(:[0-9]{1,2}){0,1}$"
-    local pattern2="^[0-9]+ (day|month|year)s{0,1} ago$"
-    local usage="eg. 20 aug 2023 9:15 or 20 aug 2023 9:15:10 or 4 day ago or 3 month ago or 1 year ago"
+    local pattern2="^[0-9]+ (min|hour|day|month|year)s{0,1} ago$"
+    local usage="eg. 20 aug 2023 9:15 or 20 aug 2023 9:15:10 or 10 min ago or 1 hour ago or 4 day ago or 3 month ago or 1 year ago"
     
     while :; do
 	date1=$(whiptail --inputbox "Provide first date from range (just 'today' or $usage)" 10 49 --title "Date range" 3>&1 1>&2 2>&3)
 	if [[ "$date1" == "today" ]]; then
 		# assign to date1 and date2
-		date1="$(date +'%e %b %G') 0:0" 
-		date2="$(date +'%e %b %G') 23:59"
+		date1="$(date +'%e %b %G') 0:0:0" 
+		date2="$(date +'%e %b %G') 23:59:59"
 		today=0
 		break
 	else
