@@ -237,11 +237,16 @@ show_report () {
     local usage="eg. 20 aug 2023 9:15 or 20 aug 2023 9:15:10 or 10 min ago or 1 hour ago or 4 day ago or 3 month ago or 1 year ago"
     
     while :; do
-	date1=$(whiptail --inputbox "Provide first date from range (just 'today' or $usage)" 10 49 --title "Date range" 3>&1 1>&2 2>&3)
+	date1=$(whiptail --inputbox "Provide first date from range (just 'today' or 'yesterday' or $usage)" 10 49 --title "Date range" 3>&1 1>&2 2>&3)
 	if [[ "$date1" == "today" ]]; then
 		# assign to date1 and date2
 		date1="$(date +'%e %b %G') 0:0:0" 
 		date2="$(date +'%e %b %G') 23:59:59"
+		today=0
+		break
+	elif [[ "$date1" == "yesterday" ]]; then
+		date1="$(date -d "yesterday" +'%e %b %G') 0:0:0" 
+		date2="$(date -d "yesterday" +'%e %b %G') 23:59:59"
 		today=0
 		break
 	else
