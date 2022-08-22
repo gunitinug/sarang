@@ -327,7 +327,7 @@ show_report () {
 	# generate report here
 	local report=""
 	report=$(./report.sh "$date1" "$date2" 2>/dev/null)
-	whiptail --msgbox "$report" 16 200 --title "Report: from $date1 to $date2" --scrolltext
+	whiptail --msgbox "$report" 40 200 --title "Report: from $date1 to $date2" --scrolltext
 	# test: report   PASS!
 	#echo "$report"
     else
