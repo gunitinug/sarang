@@ -252,7 +252,7 @@ show_report () {
 	elif [[ "$date1" == "all" ]]; then
 	    local report=""
 	    report=$(./report.sh "all" "all" 2>/dev/null)
-	    whiptail --msgbox "$report" 16 200 --title "Report: all entries" --scrolltext
+	    whiptail --msgbox "$report" 40 200 --title "Report: all entries" --scrolltext
 	    return 0
 	else
 		[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern || "$date1" =~ $pattern2  ]] && break
