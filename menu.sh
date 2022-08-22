@@ -237,7 +237,7 @@ show_report () {
     local usage="eg. 20 aug 2023 9:15 or 20 aug 2023 9:15:10 or 10 min ago or 1 hour ago or 4 day ago or 3 month ago or 1 year ago"
     
     while :; do
-	date1=$(whiptail --inputbox "Provide first date from range (just 'today' or 'yesterday' or $usage)" 10 49 --title "Date range" 3>&1 1>&2 2>&3)
+	date1=$(whiptail --inputbox "Provide first date from range (just 'all' or 'today' or 'yesterday' or $usage)" 12 49 --title "Date range" 3>&1 1>&2 2>&3)
 	if [[ "$date1" == "today" ]]; then
 		# assign to date1 and date2
 		date1="$(date +'%e %b %G') 0:0:0" 
@@ -249,6 +249,11 @@ show_report () {
 		date2="$(date -d "yesterday" +'%e %b %G') 23:59:59"
 		today=0
 		break
+	elif [[ "$date1" == "all" ]]; then
+	    local report=""
+	    report=$(./report.sh "all" "all" 2>/dev/null)
+	    whiptail --msgbox "$report" 16 200 --title "Report: all entries" --scrolltext
+	    return 0
 	else
 		[[ -n "$date1"  ]] && [[ "$?" -eq 0 ]] && [[ $(validate_date "$date1") -eq 0 ]] && [[ "$date1" =~ $pattern || "$date1" =~ $pattern2  ]] && break
 	fi
