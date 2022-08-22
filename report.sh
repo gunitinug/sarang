@@ -183,7 +183,11 @@ generate_report () {
 }
 
 # run
-generate_range_in_epoch "$ARG1" "$ARG2"
-ref_by_range_in_epoch
+if [[ "$ARG1" == "all" ]]; then
+    S_QUERY=$(jq '.data[]' data.json)
+else
+    generate_range_in_epoch "$ARG1" "$ARG2"
+    ref_by_range_in_epoch
+fi
 generate_report
 
