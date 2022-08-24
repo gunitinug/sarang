@@ -396,12 +396,37 @@ delete_entry () {
     fi
 }
 
+this_week () {
+    local date1=""
+    local date2=""
+    
+    [[ $(date +%A) == "Monday" ]] && date1="$(date -d 'this monday')" && date2="$(date -d 'this sunday' +'%e %b %G') 23:59:59"
+    [[ $(date +%A) != "Monday" ]] && date1="$(date -d 'last monday')" && date2="$(date -d 'this sunday' +'%e %b %G') 23:59:59"
+
+    local report=""
+    report=$(./report.sh "$date1" "$date2" 2>/dev/null)
+    whiptail --msgbox "$report" 40 200 --title "This week report: from $date1 to $date2" --scrolltext
+}
+
+last_week () {
+    local date1=""
+    local date2=""
+    
+    [[ $(date +%A) == "Monday" ]] && date1="$(date -d 'last monday')" && date2="$(date -d 'last sunday' +'%e %b %G') 23:59:59"
+    [[ $(date +%A) != "Monday" ]] && date1="$(date -d 'last monday -7day')" && date2="$(date -d 'last sunday' +'%e %b %G') 23:59:59"
+
+    local report=""
+    report=$(./report.sh "$date1" "$date2" 2>/dev/null)
+    whiptail --msgbox "$report" 40 200 --title "Last week report: from $date1 to $date2" --scrolltext
+}
 
 # main menu
 while :; do
     sel=$(whiptail --title "Menu" --menu "Sarang $VER\n'To assist Sarang to walk again'" 25 78 16 \
        "ADD_ENTRY" "Add scoring entry" \
        "SHOW_REPORT" "Search entries by date range" \
+       "THIS_WEEK" "This week report" \
+       "LAST_WEEK" "Last week report" \
        "DELETE_ENTRY" "Delete entry by date" \
        "QUIT" "Quit" 3>&1 1>&2 2>&3)
 
@@ -412,6 +437,12 @@ while :; do
 	    ;;
 	"SHOW_REPORT")
 	    show_report
+	    ;;
+	"THIS_WEEK")
+	    this_week
+	    ;;
+	"LAST_WEEK")
+	    last_week
 	    ;;
 	"DELETE_ENTRY")
 	    delete_entry
